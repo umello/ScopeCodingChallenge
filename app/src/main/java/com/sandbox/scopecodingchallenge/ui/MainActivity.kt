@@ -15,6 +15,10 @@ class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
     lateinit var userListAdapter: UserListAdapter
     lateinit var viewModel: MainActivityViewModel
 
+    companion object {
+        val TAG : String = this::class.java.name
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -28,11 +32,7 @@ class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
         viewModel.getUserList()
     }
 
-    companion object {
-        val TAG : String = this::class.java.name
-    }
-
-    fun observeViewModel() {
+    private fun observeViewModel() {
         viewModel.userList.observe(this, { response ->
             Log.d(TAG, "observerViewModel: ${response.size}")
 
@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
         })
 
         viewModel.requestError.observe(this, {
-            binding.errorMessage.text = getString(R.string.main_activity_loading_error, it?.message ?: "")
             binding.errorMessage.visibility = if (it == null) View.INVISIBLE else View.VISIBLE
             Log.d(TAG, "observerViewModel: $it")
         })
@@ -56,5 +55,6 @@ class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
 
     override fun onItemClick(item: Data) {
         Log.d(TAG, "User clicked: ${item.owner.name}")
+        startActivity(MapsActivity.newIntent(this, item.userid))
     }
 }

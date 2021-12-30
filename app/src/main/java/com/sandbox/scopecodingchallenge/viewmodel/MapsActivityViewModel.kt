@@ -5,30 +5,31 @@ import androidx.lifecycle.ViewModel
 import com.sandbox.scopecodingchallenge.model.Data
 import com.sandbox.scopecodingchallenge.model.MobiService
 import com.sandbox.scopecodingchallenge.model.UserDataResponse
+import com.sandbox.scopecodingchallenge.model.Vehicles
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 
-class MainActivityViewModel: ViewModel() {
+class MapsActivityViewModel: ViewModel() {
     private var mobiService = MobiService()
     private val disposable = CompositeDisposable()
 
-    val userList = MutableLiveData<List<Data>>()
+    val vehicleList = MutableLiveData<List<Vehicles>>()
     val waitingResponse = MutableLiveData<Boolean>()
     val requestError = MutableLiveData<Throwable?>()
 
-    fun getUserList() {
+    fun getUserVehicleList(userId: Long) {
         waitingResponse.value = true
         requestError.value = null
         disposable.add(
-            mobiService.getUserData()
+            mobiService.getUserVehicleList(userId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<UserDataResponse>() {
-                    override fun onSuccess(value: UserDataResponse) {
+                .subscribeWith(object : DisposableSingleObserver<List<Vehicles>>() {
+                    override fun onSuccess(value: List<Vehicles>) {
                         waitingResponse.value = false
-                        userList.value = value.data.filter { it.owner != null }
+                        vehicleList.value = value
                     }
 
                     override fun onError(e: Throwable?) {
