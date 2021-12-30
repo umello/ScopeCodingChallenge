@@ -1,5 +1,5 @@
 package com.sandbox.scopecodingchallenge.model
 
-data class Json4Kotlin_Base (
+data class UserDataResponse (
 	val data : List<Data>
 )

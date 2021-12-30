@@ -6,7 +6,7 @@ import retrofit2.http.Query
 
 interface MobiApi {
     @GET("api/?op=list")
-    fun getUserList() : Single<List<Data>>
+    fun getUserData() : Single<UserDataResponse>
 
     @GET("api/?op=getlocations")
     fun getUserVehicleList(@Query("userid") userId : Long) : Single<List<Vehicles>>

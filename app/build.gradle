@@ -30,6 +30,7 @@ android {
 
         debug {
             buildConfigField ('String', 'MOBI_API', '"http://mobi.connectedcar360.net"')
+            //buildConfigField ('String', 'MOBI_API', '"https://run.mocky.io/v3/c661a566-54eb-4f71-afa3-2b6b1279477a/"')
         }
     }
 
@@ -62,4 +63,8 @@ dependencies {
     // Rxjava
     implementation 'io.reactivex.rxjava2:rxjava:2.0.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 }

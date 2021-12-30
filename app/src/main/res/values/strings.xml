@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Scope Coding Challenge</string>
+
+    <!-- MainActivity -->
+    <string name="main_activity_user_name">%1$s %2$s</string>
+    <string name="main_activity_vehicle_count">Vehicles: %1$d</string>
+    <string name="main_activity_loading_error">There was an error loading the list\n%1$s</string>
 </resources>
