@@ -1,6 +1,6 @@
 package com.sandbox.scopecodingchallenge.model
 
-data class Vehicles (
+data class Vehicle (
 	val vehicleid : Int,
 	val make : String,
 	val model : String,

@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import com.sandbox.scopecodingchallenge.R
 import com.sandbox.scopecodingchallenge.databinding.ActivityMainBinding
-import com.sandbox.scopecodingchallenge.model.Data
+import com.sandbox.scopecodingchallenge.model.UserData
 import com.sandbox.scopecodingchallenge.viewmodel.MainActivityViewModel
 
 class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
@@ -53,7 +52,7 @@ class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
 
     // UserListAdapter.OnItemClickListener
 
-    override fun onItemClick(item: Data) {
+    override fun onItemClick(item: UserData) {
         Log.d(TAG, "User clicked: ${item.owner.name}")
         startActivity(MapsActivity.newIntent(this, item.userid))
     }

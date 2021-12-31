@@ -2,9 +2,9 @@ package com.sandbox.scopecodingchallenge.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.sandbox.scopecodingchallenge.model.Data
+import com.sandbox.scopecodingchallenge.model.UserData
 import com.sandbox.scopecodingchallenge.model.MobiService
-import com.sandbox.scopecodingchallenge.model.UserDataResponse
+import com.sandbox.scopecodingchallenge.model.UserDataList
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -14,7 +14,7 @@ class MainActivityViewModel: ViewModel() {
     private var mobiService = MobiService()
     private val disposable = CompositeDisposable()
 
-    val userList = MutableLiveData<List<Data>>()
+    val userList = MutableLiveData<List<UserData>>()
     val waitingResponse = MutableLiveData<Boolean>()
     val requestError = MutableLiveData<Throwable?>()
 
@@ -25,8 +25,8 @@ class MainActivityViewModel: ViewModel() {
             mobiService.getUserData()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<UserDataResponse>() {
-                    override fun onSuccess(value: UserDataResponse) {
+                .subscribeWith(object : DisposableSingleObserver<UserDataList>() {
+                    override fun onSuccess(value: UserDataList) {
                         waitingResponse.value = false
                         userList.value = value.data.filter { it.owner != null }
                     }

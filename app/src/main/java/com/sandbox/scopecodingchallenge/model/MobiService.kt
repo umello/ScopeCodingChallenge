@@ -31,6 +31,6 @@ class MobiService {
             .create(MobiApi::class.java)
     }
 
-    fun getUserData() : Single<UserDataResponse> = api.getUserData()
-    fun getUserVehicleList(@Query("userid") userId : Long) : Single<List<Vehicles>> = api.getUserVehicleList(userId)
+    fun getUserData() : Single<UserDataList> = api.getUserData()
+    fun getUserVehicleList(@Query("userid") userId : Long) : Single<VehicleCoordinateList> = api.getUserVehicleList(userId)
 }

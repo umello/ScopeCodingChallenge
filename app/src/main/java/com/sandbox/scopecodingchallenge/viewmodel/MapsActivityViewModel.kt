@@ -2,10 +2,9 @@ package com.sandbox.scopecodingchallenge.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.sandbox.scopecodingchallenge.model.Data
 import com.sandbox.scopecodingchallenge.model.MobiService
-import com.sandbox.scopecodingchallenge.model.UserDataResponse
-import com.sandbox.scopecodingchallenge.model.Vehicles
+import com.sandbox.scopecodingchallenge.model.VehicleCoordinateList
+import com.sandbox.scopecodingchallenge.model.VehicleCoordinates
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -15,7 +14,7 @@ class MapsActivityViewModel: ViewModel() {
     private var mobiService = MobiService()
     private val disposable = CompositeDisposable()
 
-    val vehicleList = MutableLiveData<List<Vehicles>>()
+    val vehicleList = MutableLiveData<List<VehicleCoordinates>>()
     val waitingResponse = MutableLiveData<Boolean>()
     val requestError = MutableLiveData<Throwable?>()
 
@@ -26,10 +25,10 @@ class MapsActivityViewModel: ViewModel() {
             mobiService.getUserVehicleList(userId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<List<Vehicles>>() {
-                    override fun onSuccess(value: List<Vehicles>) {
+                .subscribeWith(object : DisposableSingleObserver<VehicleCoordinateList>() {
+                    override fun onSuccess(value: VehicleCoordinateList) {
                         waitingResponse.value = false
-                        vehicleList.value = value
+                        vehicleList.value = value.data
                     }
 
                     override fun onError(e: Throwable?) {

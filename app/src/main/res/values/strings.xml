@@ -7,6 +7,10 @@
     <string name="main_activity_loading_error">There was an error loading the list</string>
     <string name="title_activity_maps">MapsActivity</string>
 
-    <!-- MainActivity -->
+    <!-- MapsActivity -->
     <string name="maps_activity_loading_error">There was an error loading vehicle positions</string>
+    <plurals name="maps_activity_null_coords">
+        <item quantity="one">Unable to retrieve coordinates of %1$d vehicle</item>
+        <item quantity="other">Unable to retrieve coordinates of %1$d vehicles</item>
+    </plurals>
 </resources>

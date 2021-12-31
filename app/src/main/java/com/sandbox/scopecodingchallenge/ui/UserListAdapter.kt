@@ -8,13 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sandbox.scopecodingchallenge.R
-import com.sandbox.scopecodingchallenge.model.Data
+import com.sandbox.scopecodingchallenge.model.UserData
 
 class UserListAdapter(private val itemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<UserListAdapter.UserViewHolder>() {
-    private var userArray = arrayListOf<Data>()
+    private var userArray = arrayListOf<UserData>()
 
-    fun setList(userList: List<Data>?) {
+    fun setList(userList: List<UserData>?) {
         userArray.clear()
 
         if (userList != null)
@@ -41,23 +41,23 @@ class UserListAdapter(private val itemClickListener: OnItemClickListener) :
         private val userName: TextView = itemView.findViewById(R.id.userName)
         private val userVehicleCount: TextView = itemView.findViewById(R.id.userCarCount)
 
-        fun bind(data: Data) {
-            userName.text = itemView.resources.getString(R.string.main_activity_user_name, data.owner.name, data.owner.surname)
-            userVehicleCount.text = itemView.resources.getString(R.string.main_activity_vehicle_count, data.vehicles.size)
+        fun bind(userData: UserData) {
+            userName.text = itemView.resources.getString(R.string.main_activity_user_name, userData.owner.name, userData.owner.surname)
+            userVehicleCount.text = itemView.resources.getString(R.string.main_activity_vehicle_count, userData.vehicles.size)
 
             Glide.with(itemView.context)
-                .load(data.owner.foto)
+                .load(userData.owner.foto)
                 .placeholder(R.drawable.ic_baseline_person_24)
                 .error(R.drawable.ic_baseline_person_off_24)
                 .into(userPicture)
 
             itemView.setOnClickListener {
-                itemClickListener.onItemClick(data)
+                itemClickListener.onItemClick(userData)
             }
         }
     }
 
     interface OnItemClickListener {
-        fun onItemClick(item: Data)
+        fun onItemClick(item: UserData)
     }
 }
