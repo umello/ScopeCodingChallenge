@@ -56,6 +56,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setTitle(R.string.app_name)
 
         idUser = intent.getLongExtra(ARG_USER_ID, 0L)
 
