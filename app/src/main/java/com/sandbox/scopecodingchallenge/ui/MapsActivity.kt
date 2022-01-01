@@ -2,6 +2,7 @@ package com.sandbox.scopecodingchallenge.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +11,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -27,7 +33,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var viewModel: MapsActivityViewModel
     private var idUser = 0L
     private var googleMap: GoogleMap? = null
-    private val markerDataList = mutableListOf<MarkerData>()
+    private val markerDataMap = mutableMapOf<Long, MarkerData>()
     private var runnableUpdaterHandler: Handler? = null
     private val runnableUpdater = object: Runnable {
         override fun run() {
@@ -77,14 +83,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun observeViewModel() {
-        viewModel.vehicleCoordList.observe(this, { response ->
-            Log.d(MainActivity.TAG, "Vehicle coordinates retrieved: ${response.size}")
+        viewModel.vehicleCoordList.observe(this, { coordinateList ->
+            Log.d(MainActivity.TAG, "Vehicle coordinates retrieved: ${coordinateList.size}")
 
-            if (response.isNotEmpty()) {
-                vehicleCoordList.clear()
+            if (coordinateList.isNotEmpty()) {
+                var nullCount = 0
 
-                // Check if there are vehicles with null coordinates
-                val nullCount = response.count { it.lat == null || it.lon == null }
+                coordinateList.forEach { coordinates ->
+                    if (coordinates.lat != null && coordinates.lon != null)
+                        markerDataMap[coordinates.vehicleid]?.coordinates = coordinates
+                    else
+                        nullCount++
+                }
 
                 if (nullCount > 0) {
                     Toast.makeText(
@@ -96,19 +106,45 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         ),
                         Toast.LENGTH_SHORT
                     ).show()
-
-                    vehicleCoordList.addAll(response.filter { it.lat != null && it.lon != null })
-                } else
-                    vehicleCoordList.addAll(response)
+                }
 
                 updateMarkers()
             }
         })
 
-        viewModel.markerDataList.observe(this, { list ->
+        viewModel.vehicleList.observe(this, { list ->
             Log.d(MainActivity.TAG, "Vehicles retrieved from local db: ${list.size}")
-            markerDataList.clear()
-            markerDataList.addAll(list)
+            markerDataMap.clear()
+
+            list.forEach { vehicle ->
+                val markerData = MarkerData(vehicle)
+                markerDataMap[vehicle.vehicleid] = markerData
+                Glide.with(this)
+                    .asBitmap().load(vehicle.foto)
+                    .listener(object : RequestListener<Bitmap?> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Bitmap?>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Bitmap?,
+                            model: Any?,
+                            target: Target<Bitmap?>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            markerData.vehiclePicture = resource
+                            return false
+                        }
+                    }
+                    ).submit()
+
+            }
         })
 
         viewModel.requestError.observe(this, {
@@ -124,42 +160,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun updateMarkers() {
-        markerList.forEach { marker ->
-            marker.remove()
+        markerDataMap.values.forEach { markerData ->
+            markerData.marker?.remove()
+            markerData.marker = null
         }
 
-        markerList.clear()
         tryToPlaceMarkers()
     }
 
     private fun tryToPlaceMarkers() {
-        if (vehicleCoordList.isNotEmpty() && googleMap != null) {
-            if (markerList.size != vehicleCoordList.size) {
-                markerList.clear()
-                vehicleCoordList.forEach { position ->
-                    val coords = LatLng(position.lat!!, position.lon!!)
-                    val vehicle = vehicleMap[position.vehicleid]
-                    googleMap?.addMarker(MarkerOptions().position(coords).title(vehicle?.make ?: "Car"))
-                        ?.let {
-                            markerList.add(it)
-                            it.tag = Pair(vehicle, coords)
-                        }
-                }
-                Log.d(TAG, "Markers updated (${markerList.size})")
-            }
-
+        if (markerDataMap.isNotEmpty() && googleMap != null) {
             val bounds = LatLngBounds.builder()
-            vehicleCoordList.forEach { position ->
-                val coords = LatLng(position.lat!!, position.lon!!)
-                bounds.include(coords)
+            var coordCount = 0
+            var coords: LatLng? = null
+            markerDataMap.values.forEach { markerData ->
+                if (markerData.marker == null && markerData.coordinates != null) {
+                    val coordinates = markerData.coordinates!!
+                    coords = LatLng(coordinates.lat!!, coordinates.lon!!)
+                    googleMap?.addMarker(MarkerOptions().position(coords!!).title(markerData.vehicle.make))
+                        ?.let { marker ->
+                            marker.tag = markerData
+                            markerData.marker = marker
+                        }
+
+                    bounds.include(coords!!)
+                    coordCount++
+                }
             }
 
             googleMap?.setOnMapLoadedCallback {
-                if (vehicleCoordList.size >= 2)
+                if (coordCount >= 2)
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 200))
                 else {
-                    val coords = LatLng(vehicleCoordList.first().lat!!, vehicleCoordList.first().lon!!)
-                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(coords, 16f))
+                    if (coords != null)
+                        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(coords!!, 16f))
                 }
             }
         }

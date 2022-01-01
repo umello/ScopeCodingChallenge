@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.sandbox.scopecodingchallenge.R
+import com.sandbox.scopecodingchallenge.model.MarkerData
 import com.sandbox.scopecodingchallenge.model.Vehicle
 import com.sandbox.scopecodingchallenge.model.VehicleCoordinates
 import java.util.*
@@ -25,19 +27,19 @@ class MarkerInfoAdapter(private val context: Context): GoogleMap.InfoWindowAdapt
 
     override fun getInfoWindow(marker: Marker): View? {
         val view = LayoutInflater.from(context).inflate(R.layout.marker_layout, null)
-        val vehicle = (marker.tag as Pair<*, *>).first as Vehicle
-        val coords = (marker.tag as Pair<*, *>).second as LatLng
+        val markerData = marker.tag as MarkerData
+        val vehicle = markerData.vehicle
+        val coords = markerData.coordinates
         val imageView = view.findViewById<ImageView>(R.id.carPicture)
 
-        Glide.with(context)
-            .load(vehicle.foto)
-            .placeholder(R.drawable.ic_baseline_image_24)
-            .error(R.drawable.ic_baseline_image_not_supported_24)
-            .into(imageView)
+        if (markerData.vehiclePicture != null)
+            imageView.setImageBitmap(markerData.vehiclePicture)
+        else
+            imageView.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_image_not_supported_24))
 
         view.findViewById<TextView>(R.id.carMake).text = vehicle.make
         view.findViewById<TextView>(R.id.carModel).text = vehicle.model
-        view.findViewById<TextView>(R.id.carAddress).text = getCoordinateAddress(coords)
+        view.findViewById<TextView>(R.id.carAddress).text = getCoordinateAddress(LatLng(coords?.lat!!, coords.lon!!))
         view.findViewById<ImageView>(R.id.carColor).setColorFilter(Color.parseColor(vehicle.color))
         return view
     }

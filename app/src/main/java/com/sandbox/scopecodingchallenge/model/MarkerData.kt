@@ -3,10 +3,9 @@ package com.sandbox.scopecodingchallenge.model
 import android.graphics.Bitmap
 import com.google.android.gms.maps.model.Marker
 
-class MarkerData {
-    lateinit var vehicle: Vehicle
-    lateinit var vehiclePicture: Bitmap
-    lateinit var coordinates: VehicleCoordinates
-    lateinit var address: String
-    lateinit var marker: Marker
+class MarkerData(val vehicle: Vehicle) {
+    var vehiclePicture: Bitmap? = null
+    var coordinates: VehicleCoordinates? = null
+    var address: String? = null
+    var marker: Marker? = null
 }
