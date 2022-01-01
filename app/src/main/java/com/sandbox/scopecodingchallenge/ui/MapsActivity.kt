@@ -16,22 +16,18 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.sandbox.scopecodingchallenge.R
 import com.sandbox.scopecodingchallenge.databinding.ActivityMapsBinding
-import com.sandbox.scopecodingchallenge.model.Vehicle
-import com.sandbox.scopecodingchallenge.model.VehicleCoordinates
+import com.sandbox.scopecodingchallenge.model.MarkerData
 import com.sandbox.scopecodingchallenge.viewmodel.MapsActivityViewModel
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private lateinit var viewModel: MapsActivityViewModel
     private var idUser = 0L
-    private val vehicleCoordList = mutableListOf<VehicleCoordinates>()
-    private val vehicleMap = mutableMapOf<Long, Vehicle>()
     private var googleMap: GoogleMap? = null
-    private val markerList = mutableListOf<Marker>()
+    private val markerDataList = mutableListOf<MarkerData>()
     private var runnableUpdaterHandler: Handler? = null
     private val runnableUpdater = object: Runnable {
         override fun run() {
@@ -109,10 +105,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
-        viewModel.vehicleList.observe(this, { list ->
+        viewModel.markerDataList.observe(this, { list ->
             Log.d(MainActivity.TAG, "Vehicles retrieved from local db: ${list.size}")
-            vehicleMap.clear()
-            list.forEach { vehicleMap[it.vehicleid] = it }
+            markerDataList.clear()
+            markerDataList.addAll(list)
         })
 
         viewModel.requestError.observe(this, {

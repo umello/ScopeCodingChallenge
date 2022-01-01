@@ -17,9 +17,9 @@ import java.util.*
 class MapsActivityViewModel(application: Application): BaseCoroutineViewModel(application) {
     private var mobiService = MobiService()
     private val disposable = CompositeDisposable()
+    private val markerDataMap = mutableMapOf<Long, MarkerData>()
 
-    val vehicleCoordList = MutableLiveData<List<VehicleCoordinates>>()
-    val vehicleList = MutableLiveData<List<Vehicle>>()
+    val markerDataList = MutableLiveData<List<MarkerData>>()
     val waitingResponse = MutableLiveData<Boolean>()
     val requestError = MutableLiveData<Throwable?>()
 
@@ -48,7 +48,11 @@ class MapsActivityViewModel(application: Application): BaseCoroutineViewModel(ap
         launch {
             val dao = VehicleDatabase(getApplication()).vehicleDao()
             val list = dao.getUserVehicles(userId)
-            vehicleList.value = list
+//            vehicleList.value = list
+
+            list.forEach {
+
+            }
         }
     }
 
