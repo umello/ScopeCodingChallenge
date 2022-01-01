@@ -13,4 +13,6 @@
         <item quantity="one">Unable to retrieve coordinates of %1$d vehicle</item>
         <item quantity="other">Unable to retrieve coordinates of %1$d vehicles</item>
     </plurals>
+    <string name="marker_name">%1$s %2$s</string>
+
 </resources>

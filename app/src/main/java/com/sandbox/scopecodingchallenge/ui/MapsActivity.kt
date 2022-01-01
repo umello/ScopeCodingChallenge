@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.sandbox.scopecodingchallenge.R
 import com.sandbox.scopecodingchallenge.databinding.ActivityMapsBinding
+import com.sandbox.scopecodingchallenge.model.Vehicle
 import com.sandbox.scopecodingchallenge.model.VehicleCoordinates
 import com.sandbox.scopecodingchallenge.viewmodel.MapsActivityViewModel
 
@@ -27,14 +28,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private lateinit var viewModel: MapsActivityViewModel
     private var idUser = 0L
-    private val vehicleList = mutableListOf<VehicleCoordinates>()
+    private val vehicleCoordList = mutableListOf<VehicleCoordinates>()
+    private val vehicleMap = mutableMapOf<Long, Vehicle>()
     private var googleMap: GoogleMap? = null
     private val markerList = mutableListOf<Marker>()
     private var runnableUpdaterHandler: Handler? = null
     private val runnableUpdater = object: Runnable {
         override fun run() {
             Log.d(TAG, "Requesting vehicle coordinates update...")
-            viewModel.getUserVehicleList(idUser)
+            viewModel.getUserVehicleCoordsList(idUser)
             runnableUpdaterHandler = Handler(Looper.getMainLooper())
             runnableUpdaterHandler?.postDelayed(this, UPDATE_MARKERS_INTERVAL)
         }
@@ -65,6 +67,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         viewModel = ViewModelProvider(this)[MapsActivityViewModel::class.java]
         observeViewModel()
+        viewModel.getUserVehicleList(idUser)
     }
 
     override fun onResume() {
@@ -78,11 +81,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun observeViewModel() {
-        viewModel.vehicleList.observe(this, { response ->
-            Log.d(MainActivity.TAG, "observerViewModel: ${response.size}")
+        viewModel.vehicleCoordList.observe(this, { response ->
+            Log.d(MainActivity.TAG, "Vehicle coordinates retrieved: ${response.size}")
 
             if (response.isNotEmpty()) {
-                vehicleList.clear()
+                vehicleCoordList.clear()
 
                 // Check if there are vehicles with null coordinates
                 val nullCount = response.count { it.lat == null || it.lon == null }
@@ -98,19 +101,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    vehicleList.addAll(response.filter { it.lat != null && it.lon != null })
+                    vehicleCoordList.addAll(response.filter { it.lat != null && it.lon != null })
                 } else
-                    vehicleList.addAll(response)
+                    vehicleCoordList.addAll(response)
 
                 updateMarkers()
             }
+        })
+
+        viewModel.vehicleList.observe(this, { list ->
+            Log.d(MainActivity.TAG, "Vehicles retrieved from local db: ${list.size}")
+            vehicleMap.clear()
+            list.forEach { vehicleMap[it.vehicleid] = it }
         })
 
         viewModel.requestError.observe(this, {
             if (it != null)
                 Toast.makeText(applicationContext, getString(R.string.maps_activity_loading_error), Toast.LENGTH_SHORT).show()
 
-            Log.d(MainActivity.TAG, "observerViewModel: $it")
+            Log.d(MainActivity.TAG, "Request error: $it")
         })
 
         viewModel.waitingResponse.observe(this, {
@@ -128,28 +137,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun tryToPlaceMarkers() {
-        if (vehicleList.isNotEmpty() && googleMap != null) {
-            if (markerList.size != vehicleList.size) {
+        if (vehicleCoordList.isNotEmpty() && googleMap != null) {
+            if (markerList.size != vehicleCoordList.size) {
                 markerList.clear()
-                vehicleList.forEach { position ->
+                vehicleCoordList.forEach { position ->
                     val coords = LatLng(position.lat!!, position.lon!!)
-                    googleMap?.addMarker(MarkerOptions().position(coords).title("Car"))
-                        ?.let { markerList.add(it) }
+                    val vehicle = vehicleMap[position.vehicleid]
+                    googleMap?.addMarker(MarkerOptions().position(coords).title(vehicle?.make ?: "Car"))
+                        ?.let {
+                            markerList.add(it)
+                            it.tag = Pair(vehicle, coords)
+                        }
                 }
                 Log.d(TAG, "Markers updated (${markerList.size})")
             }
 
             val bounds = LatLngBounds.builder()
-            vehicleList.forEach { position ->
+            vehicleCoordList.forEach { position ->
                 val coords = LatLng(position.lat!!, position.lon!!)
                 bounds.include(coords)
             }
 
             googleMap?.setOnMapLoadedCallback {
-                if (vehicleList.size >= 2)
+                if (vehicleCoordList.size >= 2)
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 200))
                 else {
-                    val coords = LatLng(vehicleList.first().lat!!, vehicleList.first().lon!!)
+                    val coords = LatLng(vehicleCoordList.first().lat!!, vehicleCoordList.first().lon!!)
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(coords, 16f))
                 }
             }
@@ -158,6 +171,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
+        googleMap?.setInfoWindowAdapter(MarkerInfoAdapter(this))
         tryToPlaceMarkers()
     }
 }

@@ -42,7 +42,7 @@ class UserListAdapter(private val itemClickListener: OnItemClickListener) :
         private val userVehicleCount: TextView = itemView.findViewById(R.id.userCarCount)
 
         fun bind(userData: UserData) {
-            userName.text = itemView.resources.getString(R.string.main_activity_user_name, userData.owner.name, userData.owner.surname)
+            userName.text = itemView.resources.getString(R.string.main_activity_user_name, userData.owner!!.name, userData.owner.surname)
             userVehicleCount.text = itemView.resources.getString(R.string.main_activity_vehicle_count, userData.vehicles.size)
 
             Glide.with(itemView.context)

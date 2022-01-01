@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/bullet_color.xml" value="0.5619791666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.5458333333333333" />
         <entry key="app/src/main/res/layout/activity_maps.xml" value="0.26545086119554206" />
         <entry key="app/src/main/res/layout/item_user.xml" value="0.5458333333333333" />
+        <entry key="app/src/main/res/layout/marker_layout.xml" value="0.26545086119554206" />
       </map>
     </option>
   </component>

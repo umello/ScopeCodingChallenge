@@ -1,16 +1,16 @@
 package com.sandbox.scopecodingchallenge.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.sandbox.scopecodingchallenge.model.UserData
-import com.sandbox.scopecodingchallenge.model.MobiService
-import com.sandbox.scopecodingchallenge.model.UserDataList
+import com.sandbox.scopecodingchallenge.model.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 
-class MainActivityViewModel: ViewModel() {
+class MainActivityViewModel(application: Application): BaseCoroutineViewModel(application) {
     private var mobiService = MobiService()
     private val disposable = CompositeDisposable()
 
@@ -27,11 +27,26 @@ class MainActivityViewModel: ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<UserDataList>() {
                     override fun onSuccess(value: UserDataList) {
-                        waitingResponse.value = false
-                        userList.value = value.data.filter { it.owner != null }
+                        val userDataList = value.data.filter { it.owner != null }
+                        val vehicleList = mutableListOf<Vehicle>()
+
+                        userDataList.forEach { userData ->
+                            userData.vehicles.forEach { vehicle ->
+                                vehicle.ownerId = userData.userid
+                                vehicleList.add(vehicle)
+                            }
+                        }
+
+                        launch {
+                            val dao = VehicleDatabase(getApplication()).vehicleDao()
+                            dao.deleteAllVehicles()
+                            dao.insertAll(*vehicleList.toTypedArray())
+                            waitingResponse.value = false
+                            userList.value = userDataList
+                        }
                     }
 
-                    override fun onError(e: Throwable?) {
+                    override fun onError(e: Throwable) {
                         waitingResponse.value = false
                         requestError.value = e
                     }

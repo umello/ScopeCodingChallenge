@@ -32,5 +32,5 @@ class MobiService {
     }
 
     fun getUserData() : Single<UserDataList> = api.getUserData()
-    fun getUserVehicleList(@Query("userid") userId : Long) : Single<VehicleCoordinateList> = api.getUserVehicleList(userId)
+    fun getUserVehicleCoordsList(@Query("userid") userId : Long) : Single<VehicleCoordinateList> = api.getUserVehicleCoordsList(userId)
 }

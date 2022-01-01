@@ -9,5 +9,5 @@ interface MobiApi {
     fun getUserData() : Single<UserDataList>
 
     @GET("api/?op=getlocations")
-    fun getUserVehicleList(@Query("userid") userId : Long) : Single<VehicleCoordinateList>
+    fun getUserVehicleCoordsList(@Query("userid") userId : Long) : Single<VehicleCoordinateList>
 }

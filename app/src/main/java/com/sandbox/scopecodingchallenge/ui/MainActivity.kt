@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
     // UserListAdapter.OnItemClickListener
 
     override fun onItemClick(item: UserData) {
-        Log.d(TAG, "User clicked: ${item.owner.name}")
+        Log.d(TAG, "User clicked: ${item.owner?.name}")
         startActivity(MapsActivity.newIntent(this, item.userid))
     }
 }
