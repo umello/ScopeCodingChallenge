@@ -169,9 +169,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             .icon(
                                 BitmapHelper.bitmapFromVector(
                                     this,
-                                    R.drawable.ic_baseline_directions_car_24,
+                                    R.drawable.ic_car_filled,
                                     Color.parseColor(markerData.vehicle.color),
-                                    1.5f
+                                    R.drawable.ic_car_outline,
+                                    getColor(R.color.dark_gray),
+                                    .2f
                                 )
                             )
                             .title(markerData.vehicle.make)

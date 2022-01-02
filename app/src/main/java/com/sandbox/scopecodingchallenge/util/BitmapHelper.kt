@@ -20,10 +20,13 @@ object BitmapHelper {
         context: Context,
         @DrawableRes srcId: Int,
         @ColorInt color: Int,
+        @DrawableRes srcOutlineId: Int,
+        @ColorInt colorOutline: Int,
         scale: Float = 1f
     ): BitmapDescriptor {
         val source = ResourcesCompat.getDrawable(context.resources, srcId, null)
             ?: return BitmapDescriptorFactory.defaultMarker()
+        val sourceOut = ResourcesCompat.getDrawable(context.resources, srcOutlineId, null)
         val bmp = Bitmap.createBitmap(
             (source.intrinsicWidth * scale).toInt(),
             (source.intrinsicHeight * scale).toInt(),
@@ -33,6 +36,12 @@ object BitmapHelper {
         source.setBounds(0, 0, canvas.width, canvas.height)
         DrawableCompat.setTint(source, color)
         source.draw(canvas)
+
+        if (sourceOut != null) {
+            sourceOut.setBounds(0, 0, canvas.width, canvas.height)
+            DrawableCompat.setTint(sourceOut, colorOutline)
+            sourceOut.draw(canvas)
+        }
 
         return BitmapDescriptorFactory.fromBitmap(bmp)
     }
