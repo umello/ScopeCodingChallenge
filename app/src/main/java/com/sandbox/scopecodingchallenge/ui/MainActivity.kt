@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import com.sandbox.scopecodingchallenge.R
 import com.sandbox.scopecodingchallenge.databinding.ActivityMainBinding
 import com.sandbox.scopecodingchallenge.model.UserData
 import com.sandbox.scopecodingchallenge.viewmodel.MainActivityViewModel
@@ -48,12 +50,20 @@ class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
         viewModel.waitingResponse.observe(this, {
             binding.progressIndicator.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
+
+        viewModel.loadingLocally.observe(this, {
+            Toast.makeText(
+                applicationContext,
+                getString(if (it) R.string.main_activity_loading_locally else R.string.main_activity_loading_remotely),
+                Toast.LENGTH_SHORT
+            ).show()
+        })
     }
 
     // UserListAdapter.OnItemClickListener
 
     override fun onItemClick(item: UserData) {
         Log.d(TAG, "User clicked: ${item.owner?.name}")
-        startActivity(MapsActivity.newIntent(this, item.userid))
+        startActivity(MapsActivity.newIntent(this, item.userid!!))
     }
 }

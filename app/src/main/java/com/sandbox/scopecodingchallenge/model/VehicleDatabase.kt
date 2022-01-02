@@ -1,13 +1,14 @@
 package com.sandbox.scopecodingchallenge.model
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 
-@Database(entities = [Vehicle::class], version = 1)
+@Database(entities = [UserData::class, Owner::class, Vehicle::class], version = 1)
+@TypeConverters(Converters::class)
 abstract class VehicleDatabase: RoomDatabase() {
     abstract fun vehicleDao(): VehicleDao
+    abstract fun ownerDao(): OwnerDao
+    abstract fun userDataDao(): UserDataDao
 
     companion object {
         @Volatile private var instance: VehicleDatabase? = null
@@ -24,5 +25,26 @@ abstract class VehicleDatabase: RoomDatabase() {
             VehicleDatabase::class.java,
             "vehicledatabase"
         ).build()
+    }
+}
+
+class Converters {
+    @TypeConverter
+    fun fromStringToOwner(value: String?): Owner? {
+        return null
+    }
+
+    @TypeConverter
+    fun ownerToNull(owner: Owner?): String {
+        return "empty"
+    }
+    @TypeConverter
+    fun fromStringToVehicleListPlaceholder(value: String?): List<Vehicle>? {
+        return listOf()
+    }
+
+    @TypeConverter
+    fun vehicleListToPlaceholder(list: List<Vehicle>?): String {
+        return "empty"
     }
 }

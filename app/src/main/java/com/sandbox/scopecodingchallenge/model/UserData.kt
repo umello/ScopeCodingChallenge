@@ -1,7 +1,12 @@
 package com.sandbox.scopecodingchallenge.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class UserData (
-	val userid : Long,
-	val owner : Owner?,
-	val vehicles : List<Vehicle>
+	@PrimaryKey
+	val userid : Long?,
+	var owner : Owner?,
+	var vehicles : List<Vehicle>
 )

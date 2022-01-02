@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.sandbox.scopecodingchallenge.R
 import com.sandbox.scopecodingchallenge.model.UserData
 
@@ -42,11 +43,12 @@ class UserListAdapter(private val itemClickListener: OnItemClickListener) :
         private val userVehicleCount: TextView = itemView.findViewById(R.id.userCarCount)
 
         fun bind(userData: UserData) {
-            userName.text = itemView.resources.getString(R.string.main_activity_user_name, userData.owner!!.name, userData.owner.surname)
+            userName.text = itemView.resources.getString(R.string.main_activity_user_name, userData.owner!!.name, userData.owner!!.surname)
             userVehicleCount.text = itemView.resources.getString(R.string.main_activity_vehicle_count, userData.vehicles.size)
 
             Glide.with(itemView.context)
-                .load(userData.owner.foto)
+                .load(userData.owner!!.foto)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.ic_baseline_person_24)
                 .error(R.drawable.ic_baseline_person_off_24)
                 .into(userPicture)
