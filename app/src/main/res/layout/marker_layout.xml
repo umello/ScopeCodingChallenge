@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        android:contentDescription="@string/cont_desc_car_picture" />
 
     <TextView
         android:id="@+id/carMake"
@@ -47,7 +47,7 @@
         app:layout_constraintTop_toTopOf="@id/carMake"
         app:layout_constraintBottom_toBottomOf="@id/carModel"
         android:src="@drawable/bullet_color"
-        />
+        android:contentDescription="@string/cont_desc_car_color" />
 
     <TextView
         android:id="@+id/carAddress"

@@ -9,9 +9,6 @@ interface OwnerDao {
     @Insert
     suspend fun insertAll(vararg owners: Owner)
 
-    @Query("SELECT * FROM owner")
-    suspend fun getAll(): List<Owner>
-
     @Query("SELECT * FROM owner WHERE userId = :userId")
     suspend fun getByUserId(userId: Long) : Owner
 

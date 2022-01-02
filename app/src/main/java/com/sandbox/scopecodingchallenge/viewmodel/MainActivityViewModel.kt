@@ -21,8 +21,8 @@ class MainActivityViewModel(application: Application): BaseCoroutineViewModel(ap
     val requestError = MutableLiveData<Throwable?>()
 
     companion object {
-//        const val MAX_CACHE_AGE_MILLIS = 24 * 60 * 60 * 1000
-        const val MAX_CACHE_AGE_MILLIS = 5 * 60 * 1000
+        const val MAX_CACHE_AGE_MILLIS = 24 * 60 * 60 * 1000    // 24h
+//        const val MAX_CACHE_AGE_MILLIS = 5 * 60 * 1000    // 5 min
     }
 
     fun getUserList() {

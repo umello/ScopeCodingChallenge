@@ -3,8 +3,6 @@ package com.sandbox.scopecodingchallenge.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,7 +24,6 @@ import com.sandbox.scopecodingchallenge.model.MarkerData
 import com.sandbox.scopecodingchallenge.util.BitmapHelper
 import com.sandbox.scopecodingchallenge.util.GeolocationHelper
 import com.sandbox.scopecodingchallenge.viewmodel.MapsActivityViewModel
-import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
@@ -79,7 +76,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onPause() {
         super.onPause()
-        runnableUpdaterHandler?.removeCallbacks(runnableUpdater);
+        runnableUpdaterHandler?.removeCallbacks(runnableUpdater)
     }
 
     private fun observeViewModel() {

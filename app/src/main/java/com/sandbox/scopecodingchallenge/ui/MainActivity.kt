@@ -12,13 +12,10 @@ import com.sandbox.scopecodingchallenge.model.UserData
 import com.sandbox.scopecodingchallenge.viewmodel.MainActivityViewModel
 import androidx.recyclerview.widget.DividerItemDecoration
 
-
-
-
 class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
-    lateinit var userListAdapter: UserListAdapter
-    lateinit var viewModel: MainActivityViewModel
+    private lateinit var userListAdapter: UserListAdapter
+    private lateinit var viewModel: MainActivityViewModel
 
     companion object {
         val TAG : String = this::class.java.name

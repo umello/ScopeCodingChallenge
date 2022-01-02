@@ -2,23 +2,15 @@ package com.sandbox.scopecodingchallenge.ui
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.ColorFilter
-import android.location.Address
-import android.location.Geocoder
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
-import com.bumptech.glide.Glide
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.sandbox.scopecodingchallenge.R
 import com.sandbox.scopecodingchallenge.model.MarkerData
-import com.sandbox.scopecodingchallenge.model.Vehicle
-import com.sandbox.scopecodingchallenge.model.VehicleCoordinates
-import java.util.*
 
 class MarkerInfoAdapter(private val context: Context): GoogleMap.InfoWindowAdapter {
     override fun getInfoContents(p0: Marker): View? {

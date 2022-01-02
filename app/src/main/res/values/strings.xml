@@ -15,6 +15,10 @@
         <item quantity="one">Unable to retrieve coordinates of %1$d vehicle</item>
         <item quantity="other">Unable to retrieve coordinates of %1$d vehicles</item>
     </plurals>
-    <string name="marker_name">%1$s %2$s</string>
+
+    <!-- Image Content Descriptions -->
+    <string name="cont_desc_user_picture">User picture</string>
+    <string name="cont_desc_car_picture">Car picture</string>
+    <string name="cont_desc_car_color">Car color sample</string>
 
 </resources>
