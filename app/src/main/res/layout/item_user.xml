@@ -7,13 +7,15 @@
 
     <ImageView
         android:id="@+id/userPicture"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:background="@color/black"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -31,13 +33,14 @@
             android:id="@+id/userName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Dave Mustaine" />
+            tools:text="Dave Mustaine"
+            style="@style/RecyclerItemUserName" />
 
         <TextView
             android:id="@+id/userCarCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Vehicles: 2"
-            />
+            style="@style/RecyclerItemUserCarCount" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

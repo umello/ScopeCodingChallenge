@@ -10,6 +10,10 @@ import com.sandbox.scopecodingchallenge.R
 import com.sandbox.scopecodingchallenge.databinding.ActivityMainBinding
 import com.sandbox.scopecodingchallenge.model.UserData
 import com.sandbox.scopecodingchallenge.viewmodel.MainActivityViewModel
+import androidx.recyclerview.widget.DividerItemDecoration
+
+
+
 
 class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
@@ -27,6 +31,12 @@ class MainActivity : AppCompatActivity(), UserListAdapter.OnItemClickListener {
 
         userListAdapter = UserListAdapter(this)
         binding.userList.adapter = userListAdapter
+        binding.userList.addItemDecoration(
+            DividerItemDecoration(
+                binding.userList.context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         observeViewModel()
 

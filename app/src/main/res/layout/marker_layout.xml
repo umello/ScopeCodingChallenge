@@ -19,30 +19,23 @@
 
     <TextView
         android:id="@+id/carMake"
-        android:textStyle="bold"
-        android:textColor="@color/dark_gray_blue"
-        android:textSize="20sp"
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         tools:text="Volvo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/carColor"
         app:layout_constraintTop_toBottomOf="@id/carPicture"
-        />
+        style="@style/MakerCarMake" />
 
     <TextView
         android:id="@+id/carModel"
-        android:textColor="@color/dark_gray_blue"
-        android:textStyle="italic"
-        android:textSize="12sp"
         tools:text="DFG455"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/carMake"
         app:layout_constraintTop_toBottomOf="@id/carMake"
-        />
+        style="@style/MakerCarModel" />
 
     <ImageView
         android:id="@+id/carColor"

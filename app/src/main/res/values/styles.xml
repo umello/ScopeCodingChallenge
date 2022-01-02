@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RecyclerItemUserName">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="RecyclerItemUserCarCount">
+        <item name="android:textColor">@color/light_gray</item>
+    </style>
+
+    <style name="MakerCarMake">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/dark_gray_blue</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">0dp</item>
+    </style>
+
+    <style name="MakerCarModel">
+        <item name="android:textColor">@color/dark_gray_blue</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>
