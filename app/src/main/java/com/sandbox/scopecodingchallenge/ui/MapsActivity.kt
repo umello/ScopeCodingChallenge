@@ -2,7 +2,9 @@ package com.sandbox.scopecodingchallenge.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
+import android.graphics.Color
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,11 +13,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -26,7 +23,10 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.sandbox.scopecodingchallenge.R
 import com.sandbox.scopecodingchallenge.databinding.ActivityMapsBinding
 import com.sandbox.scopecodingchallenge.model.MarkerData
+import com.sandbox.scopecodingchallenge.util.BitmapHelper
+import com.sandbox.scopecodingchallenge.util.GeolocationHelper
 import com.sandbox.scopecodingchallenge.viewmodel.MapsActivityViewModel
+import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
@@ -35,7 +35,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var googleMap: GoogleMap? = null
     private val markerDataMap = mutableMapOf<Long, MarkerData>()
     private var runnableUpdaterHandler: Handler? = null
-    private val runnableUpdater = object: Runnable {
+    private val runnableUpdater = object : Runnable {
         override fun run() {
             Log.d(TAG, "Requesting vehicle coordinates update...")
             viewModel.getUserVehicleCoordsList(idUser)
@@ -45,7 +45,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     companion object {
-        val TAG : String = this::class.java.name
+        val TAG: String = this::class.java.name
         private const val ARG_USER_ID = "arg_user_id"
         private const val UPDATE_MARKERS_INTERVAL = 1000L * 60
 
@@ -90,9 +90,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 var nullCount = 0
 
                 coordinateList.forEach { coordinates ->
-                    if (coordinates.lat != null && coordinates.lon != null)
-                        markerDataMap[coordinates.vehicleid]?.coordinates = coordinates
-                    else
+                    if (coordinates.lat != null && coordinates.lon != null) {
+                        markerDataMap[coordinates.vehicleid]?.let {
+                            it.coordinates = coordinates
+                            it.address =
+                                GeolocationHelper.getCoordinateAddress(this, LatLng(coordinates.lat, coordinates.lon))
+                        }
+                    } else
                         nullCount++
                 }
 
@@ -119,37 +123,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             list.forEach { vehicle ->
                 val markerData = MarkerData(vehicle)
                 markerDataMap[vehicle.vehicleid] = markerData
-                Glide.with(this)
-                    .asBitmap().load(vehicle.foto)
-                    .listener(object : RequestListener<Bitmap?> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Bitmap?>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Bitmap?,
-                            model: Any?,
-                            target: Target<Bitmap?>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            markerData.vehiclePicture = resource
-                            return false
-                        }
-                    }
-                    ).submit()
-
+                BitmapHelper.loadBitmap(this, vehicle.foto) { bitmap ->
+                    markerData.vehiclePicture = bitmap
+                }
             }
         })
 
         viewModel.requestError.observe(this, {
             if (it != null)
-                Toast.makeText(applicationContext, getString(R.string.maps_activity_loading_error), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.maps_activity_loading_error),
+                    Toast.LENGTH_SHORT
+                ).show()
 
             Log.d(MainActivity.TAG, "Request error: $it")
         })
@@ -177,11 +163,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (markerData.marker == null && markerData.coordinates != null) {
                     val coordinates = markerData.coordinates!!
                     coords = LatLng(coordinates.lat!!, coordinates.lon!!)
-                    googleMap?.addMarker(MarkerOptions().position(coords!!).title(markerData.vehicle.make))
-                        ?.let { marker ->
-                            marker.tag = markerData
-                            markerData.marker = marker
-                        }
+                    googleMap?.addMarker(
+                        MarkerOptions()
+                            .position(coords!!)
+                            .icon(
+                                BitmapHelper.bitmapFromVector(
+                                    this,
+                                    R.drawable.ic_baseline_directions_car_24,
+                                    Color.parseColor(markerData.vehicle.color),
+                                    1.5f
+                                )
+                            )
+                            .title(markerData.vehicle.make)
+                    )?.let { marker ->
+                        marker.tag = markerData
+                        markerData.marker = marker
+                    }
 
                     bounds.include(coords!!)
                     coordCount++

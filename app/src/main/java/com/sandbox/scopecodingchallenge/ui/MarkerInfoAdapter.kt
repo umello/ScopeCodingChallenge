@@ -29,33 +29,24 @@ class MarkerInfoAdapter(private val context: Context): GoogleMap.InfoWindowAdapt
         val view = LayoutInflater.from(context).inflate(R.layout.marker_layout, null)
         val markerData = marker.tag as MarkerData
         val vehicle = markerData.vehicle
-        val coords = markerData.coordinates
         val imageView = view.findViewById<ImageView>(R.id.carPicture)
 
         if (markerData.vehiclePicture != null)
             imageView.setImageBitmap(markerData.vehiclePicture)
-        else
-            imageView.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_image_not_supported_24))
+        else {
+            imageView.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.ic_baseline_image_not_supported_24
+                )
+            )
+            imageView.scaleType = ImageView.ScaleType.CENTER
+        }
 
         view.findViewById<TextView>(R.id.carMake).text = vehicle.make
         view.findViewById<TextView>(R.id.carModel).text = vehicle.model
-        view.findViewById<TextView>(R.id.carAddress).text = getCoordinateAddress(LatLng(coords?.lat!!, coords.lon!!))
+        view.findViewById<TextView>(R.id.carAddress).text = markerData.address
         view.findViewById<ImageView>(R.id.carColor).setColorFilter(Color.parseColor(vehicle.color))
         return view
-    }
-
-    private fun getCoordinateAddress(coords: LatLng): String {
-        val geocoder = Geocoder(context, Locale.getDefault())
-        val addresses: List<Address> = geocoder.getFromLocation(coords.latitude, coords.longitude, 1)
-        val address = addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-        val city = addresses[0].locality
-        val state = addresses[0].adminArea
-        val country = addresses[0].countryName
-        val postalCode = addresses[0].postalCode
-        val addressStr = StringBuilder()
-        addressStr.append(address).append("\n")
-        addressStr.append(city).append(", ").append(state).append(" ").append(postalCode).append("\n")
-        addressStr.append(country).append("\n")
-        return addressStr.toString()
     }
 }

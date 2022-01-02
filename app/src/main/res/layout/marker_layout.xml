@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:padding="16dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
+    android:background="@drawable/bg_rounded"
     >
 
     <ImageView
@@ -20,11 +20,11 @@
     <TextView
         android:id="@+id/carMake"
         android:textStyle="bold"
-        android:textSize="18sp"
+        android:textColor="@color/dark_gray_blue"
+        android:textSize="20sp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         tools:text="Volvo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/carColor"
@@ -33,11 +33,12 @@
 
     <TextView
         android:id="@+id/carModel"
-        android:textColor="@color/dark_gray"
+        android:textColor="@color/dark_gray_blue"
+        android:textStyle="italic"
         android:textSize="12sp"
+        tools:text="DFG455"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/carMake"
         app:layout_constraintTop_toBottomOf="@id/carMake"
@@ -45,8 +46,8 @@
 
     <ImageView
         android:id="@+id/carColor"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@id/carMake"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +60,8 @@
         android:id="@+id/carAddress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        tools:text="Jeremy Martinson, Jr.\n455 Larkspur Dr. Apt 23\nBaviera, CA  92908"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/carModel"
